@@ -9,31 +9,29 @@ from super_types.models import SuperType
 
 @api_view(['GET', 'POST'])
 def supers_list(request):
-    
     supers = Super.objects.all()
     super_types = SuperType.objects.all()
     type_param = request.query_params.get('super_type')
     
-
     if request.method == 'GET':
         if type_param:
             supers = Super.objects.filter(super_type__type=type_param)
-        super_serializer = SuperSerializer(supers, many=True)
+        serializer = SuperSerializer(supers, many=True)
         super_type_serializer = SuperTypeSerializer(super_types, many=True)
-        # return Response(serializer.data)
-        custom_response_dict = {
-            'supers': super_serializer.data,
-            'super_types': super_type_serializer.data
-        }
-        return Response(custom_response_dict)
+        return Response(serializer.data)
+    serializer = SuperSerializer(supers, many=True)
+    super_type_serializer = SuperTypeSerializer(super_types, many=True)
+    custom_response_dict = {
+        'supers': serializer.data,
+        'super_types': super_type_serializer.data
+    }
+    return Response(custom_response_dict)
         
-
-
-    elif request.method == 'POST':
-        serializer = SuperSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    # elif request.method == 'Post'
+    #     serializer = SuperSerializer(data=request.data)
+    #     serializer.is_valid(raise_exception=True)
+    #     serializer.save()
+    #     return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 @api_view(['GET', 'PUT', 'DELETE'])
 def supers_id_list(request, pk):
