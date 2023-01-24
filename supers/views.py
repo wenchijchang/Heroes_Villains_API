@@ -7,38 +7,21 @@ from . models import Super
 from super_types.serializers import SuperTypeSerializer
 from super_types.models import SuperType
 
-# @api_view(['GET']) # get all supers with custom response
-# def supers_list(request):
-#     supers = Super.objects.all()
-#     super_types = SuperType.objects.all()
-#     serializer = SuperSerializer(supers, many=True)
-#     super_type_serializer = SuperTypeSerializer(super_types, many=True)
-#     custom_response_dict = {}
-#     if request.method == 'GET':
-#         custom_response_dict = {
-#             'supers': serializer.data,
-#             'super_types': super_type_serializer.data
-#         }
-#         return Response(custom_response_dict)
 
-
-
-@api_view(['GET', 'POST']) # Get all filtered supers in a list; POST to add new supers 
+@api_view(['GET', 'POST']) 
 def supers_list(request):
     supers = Super.objects.all()
     super_types = SuperType.objects.all()
     type_param = request.query_params.get('super_type')
-    serializer = SuperSerializer(supers, many=True)
-    super_type_serializer = SuperTypeSerializer(super_types, many=True)
     
     
     if request.method == 'GET':
         if type_param:
             supers = Super.objects.filter(super_type__type=type_param)
             serializer = SuperSerializer(supers, many=True)
-        return Response(serializer.data)
+            return Response(serializer.data)
         else:
-        serializer = SuperSerializer(supers, many=True)
+            serializer = SuperSerializer(supers, many=True)
         super_type_serializer = SuperTypeSerializer(super_types, many=True)
         custom_response_dict = {
             'supers': serializer.data,
@@ -50,7 +33,7 @@ def supers_list(request):
         serializer = SuperSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
-    return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 @api_view(['GET', 'PUT', 'DELETE'])
 def supers_id_list(request, pk):
